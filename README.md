@@ -2,6 +2,6 @@
 
 |Bac a sable | Affinage|Prét | À faire | En cours | Terminer|
 |------------|---------|-----|-------–-|----------|–––––––––|
-|idéé1 |
-|idée 2| 
+|idéé1 | | | | | |
+|idée 2| | | | | |
 |
