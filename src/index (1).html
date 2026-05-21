@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque du Village - Système Agile</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #18bc9c;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #dce4ec;
+            --status-dispo: #2ecc71;
+            --status-rese: #f39c12;
+            --status-emp: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-team {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        /* Layout Onglets / Terminaux */
+        .terminal-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            background-color: #eef2f7;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .terminal-section {
+            display: none;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .terminal-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 10px;
+        }
+
+        /* Recherche */
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #149a80;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            background-color: var(--primary-color);
+        }
+
+        .btn-action:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f4f6f9;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #fdfefe;
+        }
+
+        .badge-status {
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+        }
+
+        .status-disponible { background-color: var(--status-dispo); }
+        .status-reserve { background-color: var(--status-rese); }
+        .status-emprunte { background-color: var(--status-emp); }
+
+        .notification {
+            background-color: #e8f8f5;
+            color: #117a65;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        /* Formulaires simples pour le Gestionnaire */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Application de Gestion de Bibliothèque</h1>
+        <div class="badge-team">Équipe Agile de 6 - Sprint 1 Actif</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Sélection du Terminal (Agile Multi-Terminal) -->
+        <div class="terminal-tabs">
+            <button class="tab-btn active" onclick="switchTerminal('lecteur')">Terminal n°2 : Lecteurs</button>
+            <button class="tab-btn" onclick="switchTerminal('gestionnaire')">Terminal n°1 : Gestionnaire</button>
+        </div>
+
+        <div id="notification" class="notification"></div>
+
+        <!-- TERMINAL LECTEUR : CONSULTATION & RECHERCHE -->
+        <section id="terminal-lecteur" class="terminal-section active">
+            <div class="section-title">Espace Lecteur - Liste des Ouvrages & Localisation (US1 & US2)</div>
+            
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Rechercher par titre ou auteur..." onkeyup="filtrerLivres()">
+                <button class="btn" onclick="filtrerLivres()">Rechercher</button>
+            </div>
+
+            <table id="table-livres">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Rayon</th>
+                        <th>Étagère</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-livres">
+                    <!-- Rempli dynamiquement par JS -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- TERMINAL GESTIONNAIRE : SUIVI RESERVATIONS & INSCRIPTIONS -->
+        <section id="terminal-gestionnaire" class="terminal-section">
+            <div class="section-title">Espace Gestionnaire - Liste Générale des Réservations (US7)</div>
+            
+            <table id="table-reservations">
+                <thead>
+                    <tr>
+                        <th>ID Mouvement</th>
+                        <th>Ouvrage Concerné</th>
+                        <th>Lecteur / Usager</th>
+                        <th>Type d'action</th>
+                        <th>Date Début</th>
+                        <th>Action Gestionnaire</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-reservations">
+                    <!-- Rempli dynamiquement par JS -->
+                </tbody>
+            </table>
+
+            <div class="section-title" style="margin-top: 2.5rem;">Gestion des Nouvelles Inscriptions (US4)</div>
+            <div style="max-width: 500px;">
+                <div class="form-group">
+                    <label for="usager-nom">Nom de famille</label>
+                    <input type="text" id="usager-nom" placeholder="Ex: Bensalem">
+                </div>
+                <div class="form-group">
+                    <label for="usager-prenom">Prénom</label>
+                    <input type="text" id="usager-prenom" placeholder="Ex: Wail">
+                </div>
+                <div class="form-group">
+                    <label for="usager-contact">Contact (Téléphone / Email)</label>
+                    <input type="text" id="usager-contact" placeholder="Ex: wail@polytech.univ-lyon1.fr">
+                </div>
+                <button class="btn" onclick="inscrireUsager()">Inscrire le nouvel usager</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Jeu de données initial calqué exactement sur votre fichier SQL fourni
+        let livres = [
+            { idLivre: 1, titre: "Don Quichotte", auteur: "Miguel De Cervantes", statut: "DISPONIBLE", rayon: "A", etagere: 1 },
+            { idLivre: 2, titre: "Les misérables", auteur: "Victor Hugo", statut: "DISPONIBLE", rayon: "B", etagere: 2 },
+            { idLivre: 3, titre: "Hunger Games", auteur: "Suzanne Collins", statut: "DISPONIBLE", rayon: "C", etagere: 3 },
+            { idLivre: 4, titre: "Harry Potter à l'école des sorciers", auteur: "J.K Rowling", statut: "DISPONIBLE", rayon: "D", etagere: 1 },
+            { idLivre: 5, titre: "Le Hobbit", auteur: "J.R.R Tolkien", statut: "DISPONIBLE", rayon: "A", etagere: 2 },
+            { idLivre: 6, titre: "Lorenzaccio", auteur: "Alfred de Musset", statut: "DISPONIBLE", rayon: "B", etagere: 4 },
+            { idLivre: 7, titre: "Les liasons dangereuses", auteur: "Pierre Choderlos de Laclos", statut: "DISPONIBLE", rayon: "C", etagere: 1 },
+            { idLivre: 8, titre: "Le temps de l'innocence", auteur: "Edith Wharton", statut: "DISPONIBLE", rayon: "D", etagere: 2 },
+            { idLivre: 9, titre: "La crise de la culture", auteur: "Annah Arendt", statut: "DISPONIBLE", rayon: "A", etagere: 3 },
+            { idLivre: 10, titre: "Pinocchio", auteur: "Carlo Collodi", statut: "DISPONIBLE", rayon: "B", etagere: 3 },
+            { idLivre: 11, titre: "Dora et Diego", auteur: "Leslie Valdes", statut: "DISPONIBLE", rayon: "A", etagere: 2 }
+        ];
+
+        let usagers = [
+            { idUsager: 1, nom: "Dupont", prenom: "Jean", contact: "0601020304" }
+        ];
+
+        let mouvements = [
+            // Simulation d'une réservation existante par défaut
+            { idMouvement: 101, idLivre: 3, titreLivre: "Hunger Games", usager: "Jean Dupont", type: "Réservation", dateDebut: "2026-05-20" }
+        ];
+        
+        // Mettre à jour le statut initial du livre simulé comme réservé
+        livres.find(l => l.idLivre === 3).statut = "RESERVE";
+
+        // Navigation entre Terminaux
+        function switchTerminal(terminal) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.terminal-section').forEach(sec => sec.classList.remove('active'));
+
+            if (terminal === 'lecteur') {
+                document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+                document.getElementById('terminal-lecteur').classList.add('active');
+            } else {
+                document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+                document.getElementById('terminal-gestionnaire').classList.add('active');
+            }
+        }
+
+        // Affichage des livres (Terminal 2 - Lecteurs)
+        function afficherLivres(liste = livres) {
+            const tbody = document.getElementById('tbody-livres');
+            tbody.innerHTML = '';
+
+            liste.forEach(livre => {
+                const tr = document.createElement('tr');
+                
+                const btnDisabled = livre.statut !== 'DISPONIBLE' ? 'disabled' : '';
+                
+                tr.innerHTML = `
+                    <td><strong>${livre.idLivre}</strong></td>
+                    <td>${livre.titre}</td>
+                    <td><em>${livre.auteur}</em></td>
+                    <td>Rayon ${livre.rayon}</td>
+                    <td>Étagère ${livre.etagere}</td>
+                    <td><span class="badge-status status-${livre.statut.toLowerCase()}">${livre.statut}</span></td>
+                    <td>
+                        <button class="btn btn-action" ${btnDisabled} onclick="reserverLivre(${livre.idLivre})">
+                            Réserver
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filtrer l'affichage (Algorithme de recherche)
+        function filtrerLivres() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const resultats = livres.filter(livre => 
+                livre.titre.toLowerCase().includes(query) || 
+                livre.auteur.toLowerCase().includes(query)
+            );
+            afficherLivres(resultats);
+        }
+
+        // Action de réservation côté lecteur (US3)
+        function reserverLivre(id) {
+            const livre = livres.find(l => l.idLivre === id);
+            if (livre && livre.statut === 'DISPONIBLE') {
+                livre.statut = 'RESERVE';
+                
+                // Ajouter aux mouvements pour affichage sur le terminal gestionnaire
+                const nouveauMouv = {
+                    idMouvement: mouvements.length + 101,
+                    idLivre: livre.idLivre,
+                    titreLivre: livre.titre,
+                    usager: "Lecteur Terminal 2",
+                    type: "Réservation",
+                    dateDebut: new Date().toISOString().split('T')[0]
+                };
+                mouvements.push(nouveauMouv);
+                
+                showNotification(`Le livre "${livre.titre}" a bien été réservé. Il est mis de côté !`);
+                afficherLivres();
+                afficherReservations();
+            }
+        }
+
+        // Affichage des réservations (Terminal 1 - Gestionnaire - US7)
+        function afficherReservations() {
+            const tbody = document.getElementById('tbody-reservations');
+            tbody.innerHTML = '';
+
+            const resas = mouvements.filter(m => m.type === "Réservation");
+
+            if (resas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#7f8c8d;">Aucune réservation active.</td></tr>`;
+                return;
+            }
+
+            resas.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${m.idMouvement}</td>
+                    <td><strong>${m.titreLivre}</strong> (ID: ${m.idLivre})</td>
+                    <td>${m.usager}</td>
+                    <td><span class="badge-status status-reserve">${m.type}</span></td>
+                    <td>${m.dateDebut}</td>
+                    <td>
+                        <button class="btn btn-action" style="background-color: var(--status-dispo);" onclick="validerPret(${m.idMouvement}, ${m.idLivre})">
+                            Convertir en Prêt
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Valider un prêt à partir d'une réservation
+        function validerPret(idMouv, idLivre) {
+            const mouv = mouvements.find(m => m.idMouvement === idMouv);
+            const livre = livres.find(l => l.idLivre === idLivre);
+            
+            if (mouv && livre) {
+                livre.statut = 'EMPRUNTE';
+                mouv.type = "Prêt Actif"; // Change l'action pour le suivi
+                showNotification(`La réservation #${idMouv} a été convertie en prêt. Le livre est désormais marqué comme "EMPRUNTÉ".`);
+                afficherLivres();
+                afficherReservations();
+            }
+        }
+
+        // Inscription usager (Terminal 1 - US4)
+        function inscriireUsager() {
+            const nom = document.getElementById('usager-nom').value.trim();
+            const prenom = document.getElementById('usager-prenom').value.trim();
+            const contact = document.getElementById('usager-contact').value.trim();
+
+            if (!nom || !prenom || !contact) {
+                alert("Veuillez remplir tous les champs du formulaire d'inscription.");
+                return;
+            }
+
+            const nouvelUsager = {
+                idUsager: usagers.length + 1,
+                nom: nom,
+                prenom: prenom,
+                contact: contact
+            };
+            usagers.push(nouvelUsager);
+
+            showNotification(`Usager inscrit avec succès ! ID attribué : ${nouvelUsager.idUsager} (${prenom} ${nom})`);
+            
+            // Réinitialiser le formulaire
+            document.getElementById('usager-nom').value = '';
+            document.getElementById('usager-prenom').value = '';
+            document.getElementById('usager-contact').value = '';
+        }
+
+        // Utilitaire notification
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            notif.innerText = msg;
+            notif.style.display = 'block';
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 5000);
+        }
+
+        // Chargement initial
+        window.onload = function() {
+            afficherLivres();
+            afficherReservations();
+        };
+    </script>
+</body>
+</html>
