@@ -34,6 +34,6 @@ def import_sql():
 
 
 if __name__ == "__main__":
-    import_sql()
+    #import_sql()
     recherche.recherche_titre_auteur(titre="Don Quichotte")
     date_de_retour.calculer_date_de_retour("Don Quichotte", "Miguel De Cervantes")
