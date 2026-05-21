@@ -61,7 +61,6 @@
             width: 100%;
         }
 
-        /* Layout Onglets / Terminaux */
         .terminal-tabs {
             display: flex;
             gap: 1rem;
@@ -108,7 +107,6 @@
             padding-left: 10px;
         }
 
-        /* Recherche */
         .search-box {
             display: flex;
             gap: 1rem;
@@ -149,7 +147,6 @@
             cursor: not-allowed;
         }
 
-        /* Tableaux */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -168,10 +165,6 @@
             font-weight: 600;
         }
 
-        tr:hover {
-            background-color: #fdfefe;
-        }
-
         .badge-status {
             padding: 0.25rem 0.6rem;
             border-radius: 4px;
@@ -185,17 +178,17 @@
         .status-reserve { background-color: var(--status-rese); }
         .status-emprunte { background-color: var(--status-emp); }
 
-        .notification {
-            background-color: #e8f8f5;
-            color: #117a65;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+        .notification-alert {
+            background-color: #ebf5fb;
+            color: #2c3e50;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
             display: none;
-            border-left: 4px solid var(--secondary-color);
+            border-left: 5px solid #2980b9;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* Formulaires simples pour le Gestionnaire */
         .form-group {
             margin-bottom: 1rem;
         }
@@ -204,7 +197,7 @@
             margin-bottom: 0.4rem;
             font-weight: 600;
         }
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 0.6rem;
             border: 1px solid var(--border-color);
@@ -214,141 +207,120 @@
 </head>
 <body>
 
-    <header>
-        <h1>Application de Gestion de Bibliothèque</h1>
-        <div class="badge-team">Équipe Agile de 6 - Sprint 1 Actif</div>
-    </header>
+<header>
+    <h1> Bibliothèque du Massif Central</h1>
+    <div class="badge-team">Équipe Agile </div>
+</header>
 
-    <div class="container">
-        
-        <!-- Sélection du Terminal (Agile Multi-Terminal) -->
-        <div class="terminal-tabs">
-            <button class="tab-btn active" onclick="switchTerminal('lecteur')">Terminal n°2 : Lecteurs</button>
-            <button class="tab-btn" onclick="switchTerminal('gestionnaire')">Terminal n°1 : Gestionnaire</button>
+<div class="container">
+
+    <div class="terminal-tabs">
+        <button class="tab-btn active" onclick="switchTerminal('lecteur')"> Lecteurs</button>
+        <button class="tab-btn" onclick="switchTerminal('gestionnaire')"> Gestionnaire</button>
+    </div>
+
+    <div id="reservation-alert" class="notification-alert"></div>
+
+    <section id="terminal-lecteur" class="terminal-section active">
+        <div class="section-title">Espace Lecteur - Liste des Ouvrages & Localisation </div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Rechercher par titre ou auteur..." onkeyup="filtrerLivres()">
+            <button class="btn" onclick="filtrerLivres()">Rechercher</button>
         </div>
 
-        <div id="notification" class="notification"></div>
+        <table id="table-livres">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Rayon (US2)</th>
+                <th>Étagère (US2)</th>
+                <th>Statut (US3)</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-livres">
+            </tbody>
+        </table>
+    </section>
 
-        <!-- TERMINAL LECTEUR : CONSULTATION & RECHERCHE -->
-        <section id="terminal-lecteur" class="terminal-section active">
-            <div class="section-title">Espace Lecteur - Liste des Ouvrages & Localisation (US1 & US2)</div>
-            
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Rechercher par titre ou auteur..." onkeyup="filtrerLivres()">
-                <button class="btn" onclick="filtrerLivres()">Rechercher</button>
-            </div>
+    <section id="terminal-gestionnaire" class="terminal-section">
+        <div class="section-title">Espace Gestionnaire - Liste Générale des Réservations </div>
 
-            <table id="table-livres">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Rayon</th>
-                        <th>Étagère</th>
-                        <th>Statut</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-livres">
-                    <!-- Rempli dynamiquement par JS -->
-                </tbody>
-            </table>
-        </section>
+        <table id="table-reservations">
+            <thead>
+            <tr>
+                <th>ID Mouvement</th>
+                <th>Ouvrage Concerné</th>
+                <th>Lecteur / Usager</th>
+                <th>Type d'action</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-reservations">
+            </tbody>
+        </table>
 
-        <!-- TERMINAL GESTIONNAIRE : SUIVI RESERVATIONS & INSCRIPTIONS -->
-        <section id="terminal-gestionnaire" class="terminal-section">
-            <div class="section-title">Espace Gestionnaire - Liste Générale des Réservations (US7)</div>
-            
-            <table id="table-reservations">
-                <thead>
-                    <tr>
-                        <th>ID Mouvement</th>
-                        <th>Ouvrage Concerné</th>
-                        <th>Lecteur / Usager</th>
-                        <th>Type d'action</th>
-                        <th>Date Début</th>
-                        <th>Action Gestionnaire</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-reservations">
-                    <!-- Rempli dynamiquement par JS -->
-                </tbody>
-            </table>
-
-            <div class="section-title" style="margin-top: 2.5rem;">Gestion des Nouvelles Inscriptions (US4)</div>
-            <div style="max-width: 500px;">
+        <div class="section-title" style="margin-top: 2.5rem;">Gestion des Nouvelles Inscriptions </div>
+        <div style="max-width: 500px;">
+            <form id="form-inscription" action="../../php/Inscription.php" method="POST">
                 <div class="form-group">
                     <label for="usager-nom">Nom de famille</label>
-                    <input type="text" id="usager-nom" placeholder="Ex: Bensalem">
+                    <input type="text" id="usager-nom" name="nom" placeholder="Ex: Bensalem" required>
                 </div>
                 <div class="form-group">
                     <label for="usager-prenom">Prénom</label>
-                    <input type="text" id="usager-prenom" placeholder="Ex: Wail">
+                    <input type="text" id="usager-prenom" name="prenom" placeholder="Ex: Wail" required>
                 </div>
                 <div class="form-group">
                     <label for="usager-contact">Contact (Téléphone / Email)</label>
-                    <input type="text" id="usager-contact" placeholder="Ex: wail@polytech.univ-lyon1.fr">
+                    <input type="text" id="usager-contact" name="contact" placeholder="Ex: wail@polytech.univ-lyon1.fr" required>
                 </div>
-                <button class="btn" onclick="inscrireUsager()">Inscrire le nouvel usager</button>
-            </div>
-        </section>
+                <button type="submit" class="btn">Inscrire le nouvel usager</button>
+            </form>
+        </div>
+    </section>
 
-    </div>
+</div>
 
-    <script>
-        // Jeu de données initial calqué exactement sur votre fichier SQL fourni
-        let livres = [
-            { idLivre: 1, titre: "Don Quichotte", auteur: "Miguel De Cervantes", statut: "DISPONIBLE", rayon: "A", etagere: 1 },
-            { idLivre: 2, titre: "Les misérables", auteur: "Victor Hugo", statut: "DISPONIBLE", rayon: "B", etagere: 2 },
-            { idLivre: 3, titre: "Hunger Games", auteur: "Suzanne Collins", statut: "DISPONIBLE", rayon: "C", etagere: 3 },
-            { idLivre: 4, titre: "Harry Potter à l'école des sorciers", auteur: "J.K Rowling", statut: "DISPONIBLE", rayon: "D", etagere: 1 },
-            { idLivre: 5, titre: "Le Hobbit", auteur: "J.R.R Tolkien", statut: "DISPONIBLE", rayon: "A", etagere: 2 },
-            { idLivre: 6, titre: "Lorenzaccio", auteur: "Alfred de Musset", statut: "DISPONIBLE", rayon: "B", etagere: 4 },
-            { idLivre: 7, titre: "Les liasons dangereuses", auteur: "Pierre Choderlos de Laclos", statut: "DISPONIBLE", rayon: "C", etagere: 1 },
-            { idLivre: 8, titre: "Le temps de l'innocence", auteur: "Edith Wharton", statut: "DISPONIBLE", rayon: "D", etagere: 2 },
-            { idLivre: 9, titre: "La crise de la culture", auteur: "Annah Arendt", statut: "DISPONIBLE", rayon: "A", etagere: 3 },
-            { idLivre: 10, titre: "Pinocchio", auteur: "Carlo Collodi", statut: "DISPONIBLE", rayon: "B", etagere: 3 },
-            { idLivre: 11, titre: "Dora et Diego", auteur: "Leslie Valdes", statut: "DISPONIBLE", rayon: "A", etagere: 2 }
-        ];
+<script>
+    // Jeu de données déchargé de votre table SQL (US1)
+    let livres = [
+        { idLivre: 1, titre: "Don Quichotte", auteur: "Miguel De Cervantes", statut: "DISPONIBLE", rayon: "A", etagere: 1 },
+        { idLivre: 2, titre: "Les misérables", auteur: "Victor Hugo", statut: "DISPONIBLE", rayon: "B", etagere: 2 },
+        { idLivre: 3, titre: "Hunger Games", auteur: "Suzanne Collins", statut: "DISPONIBLE", rayon: "C", etagere: 3 },
+        { idLivre: 4, titre: "Harry Potter à l'école des sorciers", auteur: "J.K Rowling", statut: "DISPONIBLE", rayon: "D", etagere: 1 },
+        { idLivre: 5, titre: "Le Hobbit", auteur: "J.R.R Tolkien", statut: "DISPONIBLE", rayon: "A", etagere: 2 },
+        { idLivre: 6, titre: "Lorenzaccio", auteur: "Alfred de Musset", statut: "DISPONIBLE", rayon: "B", etagere: 4 },
+        { idLivre: 7, titre: "Les liasons dangereuses", auteur: "Pierre Choderlos de Laclos", statut: "DISPONIBLE", rayon: "C", etagere: 1 },
+        { idLivre: 8, titre: "Le temps de l'innocence", auteur: "Edith Wharton", statut: "DISPONIBLE", rayon: "D", etagere: 2 },
+        { idLivre: 9, titre: "La crise de la culture", auteur: "Annah Arendt", statut: "DISPONIBLE", rayon: "A", etagere: 3 },
+        { idLivre: 10, titre: "Pinocchio", auteur: "Carlo Collodi", statut: "DISPONIBLE", rayon: "B", etagere: 3 },
+        { idLivre: 11, titre: "Dora et Diego", auteur: "Leslie Valdes", statut: "DISPONIBLE", rayon: "A", etagere: 2 }
+    ];
 
-        let usagers = [
-            { idUsager: 1, nom: "Dupont", prenom: "Jean", contact: "0601020304" }
-        ];
+    let mouvements = [];
 
-        let mouvements = [
-            // Simulation d'une réservation existante par défaut
-            { idMouvement: 101, idLivre: 3, titreLivre: "Hunger Games", usager: "Jean Dupont", type: "Réservation", dateDebut: "2026-05-20" }
-        ];
-        
-        // Mettre à jour le statut initial du livre simulé comme réservé
-        livres.find(l => l.idLivre === 3).statut = "RESERVE";
-
-        // Navigation entre Terminaux
-        function switchTerminal(terminal) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.terminal-section').forEach(sec => sec.classList.remove('active'));
-
-            if (terminal === 'lecteur') {
-                document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
-                document.getElementById('terminal-lecteur').classList.add('active');
-            } else {
-                document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
-                document.getElementById('terminal-gestionnaire').classList.add('active');
-            }
+    function switchTerminal(terminal) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.terminal-section').forEach(sec => sec.classList.remove('active'));
+        if (terminal === 'lecteur') {
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+            document.getElementById('terminal-lecteur').classList.add('active');
+        } else {
+            document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+            document.getElementById('terminal-gestionnaire').classList.add('active');
         }
+    }
 
-        // Affichage des livres (Terminal 2 - Lecteurs)
-        function afficherLivres(liste = livres) {
-            const tbody = document.getElementById('tbody-livres');
-            tbody.innerHTML = '';
-
-            liste.forEach(livre => {
-                const tr = document.createElement('tr');
-                
-                const btnDisabled = livre.statut !== 'DISPONIBLE' ? 'disabled' : '';
-                
-                tr.innerHTML = `
+    function afficherLivres(liste = livres) {
+        const tbody = document.getElementById('tbody-livres');
+        tbody.innerHTML = '';
+        liste.forEach(livre => {
+            const tr = document.createElement('tr');
+            const btnDisabled = livre.statut !== 'DISPONIBLE' ? 'disabled' : '';
+            tr.innerHTML = `
                     <td><strong>${livre.idLivre}</strong></td>
                     <td>${livre.titre}</td>
                     <td><em>${livre.auteur}</em></td>
@@ -361,129 +333,88 @@
                         </button>
                     </td>
                 `;
-                tbody.appendChild(tr);
-            });
-        }
+            tbody.appendChild(tr);
+        });
+    }
 
-        // Filtrer l'affichage (Algorithme de recherche)
-        function filtrerLivres() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const resultats = livres.filter(livre => 
-                livre.titre.toLowerCase().includes(query) || 
-                livre.auteur.toLowerCase().includes(query)
-            );
-            afficherLivres(resultats);
-        }
+    // US1 : Algorithme de recherche par titre/auteur
+    function filtrerLivres() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const resultats = livres.filter(livre =>
+            livre.titre.toLowerCase().includes(query) ||
+            livre.auteur.toLowerCase().includes(query)
+        );
+        afficherLivres(resultats);
+    }
 
-        // Action de réservation côté lecteur (US3)
-        function reserverLivre(id) {
-            const livre = livres.find(l => l.idLivre === id);
-            if (livre && livre.statut === 'DISPONIBLE') {
-                livre.statut = 'RESERVE';
-                
-                // Ajouter aux mouvements pour affichage sur le terminal gestionnaire
-                const nouveauMouv = {
-                    idMouvement: mouvements.length + 101,
-                    idLivre: livre.idLivre,
-                    titreLivre: livre.titre,
-                    usager: "Lecteur Terminal 2",
-                    type: "Réservation",
-                    dateDebut: new Date().toISOString().split('T')[0]
-                };
-                mouvements.push(nouveauMouv);
-                
-                showNotification(`Le livre "${livre.titre}" a bien été réservé. Il est mis de côté !`);
-                afficherLivres();
-                afficherReservations();
-            }
-        }
+    // US3 & US5 : Action de réservation + Règle J+21 sans décompte
+    function reserverLivre(id) {
+        const livre = livres.find(l => l.idLivre === id);
+        if (livre && livre.statut === 'DISPONIBLE') {
 
-        // Affichage des réservations (Terminal 1 - Gestionnaire - US7)
-        function afficherReservations() {
-            const tbody = document.getElementById('tbody-reservations');
-            tbody.innerHTML = '';
+            livre.statut = 'RESERVE';
 
-            const resas = mouvements.filter(m => m.type === "Réservation");
-
-            if (resas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#7f8c8d;">Aucune réservation active.</td></tr>`;
-                return;
-            }
-
-            resas.forEach(m => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>#${m.idMouvement}</td>
-                    <td><strong>${m.titreLivre}</strong> (ID: ${m.idLivre})</td>
-                    <td>${m.usager}</td>
-                    <td><span class="badge-status status-reserve">${m.type}</span></td>
-                    <td>${m.dateDebut}</td>
-                    <td>
-                        <button class="btn btn-action" style="background-color: var(--status-dispo);" onclick="validerPret(${m.idMouvement}, ${m.idLivre})">
-                            Convertir en Prêt
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Valider un prêt à partir d'une réservation
-        function validerPret(idMouv, idLivre) {
-            const mouv = mouvements.find(m => m.idMouvement === idMouv);
-            const livre = livres.find(l => l.idLivre === idLivre);
-            
-            if (mouv && livre) {
-                livre.statut = 'EMPRUNTE';
-                mouv.type = "Prêt Actif"; // Change l'action pour le suivi
-                showNotification(`La réservation #${idMouv} a été convertie en prêt. Le livre est désormais marqué comme "EMPRUNTÉ".`);
-                afficherLivres();
-                afficherReservations();
-            }
-        }
-
-        // Inscription usager (Terminal 1 - US4)
-        function inscriireUsager() {
-            const nom = document.getElementById('usager-nom').value.trim();
-            const prenom = document.getElementById('usager-prenom').value.trim();
-            const contact = document.getElementById('usager-contact').value.trim();
-
-            if (!nom || !prenom || !contact) {
-                alert("Veuillez remplir tous les champs du formulaire d'inscription.");
-                return;
-            }
-
-            const nouvelUsager = {
-                idUsager: usagers.length + 1,
-                nom: nom,
-                prenom: prenom,
-                contact: contact
+            const idMouv = mouvements.length + 101;
+            const nouveauMouv = {
+                idMouvement: idMouv,
+                idLivre: livre.idLivre,
+                titreLivre: livre.titre,
+                usager: "Lecteur Connecté",
+                type: "Réservation"
             };
-            usagers.push(nouvelUsager);
+            mouvements.push(nouveauMouv);
 
-            showNotification(`Usager inscrit avec succès ! ID attribué : ${nouvelUsager.idUsager} (${prenom} ${nom})`);
-            
-            // Réinitialiser le formulaire
-            document.getElementById('usager-nom').value = '';
-            document.getElementById('usager-prenom').value = '';
-            document.getElementById('usager-contact').value = '';
-        }
+            // US5 : Logique de date de retour calculée dynamiquement à J+21
+            const dateAujourdhui = new Date();
+            const dateRetourPrevue = new Date(dateAujourdhui);
+            dateRetourPrevue.setDate(dateAujourdhui.getDate() + 21);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const dateFormatee = dateRetourPrevue.toLocaleDateString('fr-FR', options);
 
-        // Utilitaire notification
-        function showNotification(msg) {
-            const notif = document.getElementById('notification');
-            notif.innerText = msg;
-            notif.style.display = 'block';
-            setTimeout(() => {
-                notif.style.display = 'none';
-            }, 5000);
-        }
+            // Affichage du message épuré demandant uniquement le texte J+21
+            document.getElementById('reservation-alert').innerHTML = `
+                    🎉 <strong>Livre "${livre.titre}" réservé avec succès !</strong><br>
+                    📅 Si converti en prêt, la date limite de retour sera fixée au <strong>${dateFormatee}</strong> (J+21).
+                `;
+            document.getElementById('reservation-alert').style.display = 'block';
 
-        // Chargement initial
-        window.onload = function() {
+            communiquerChangementBase(livre.idLivre, 'RESERVE');
+
             afficherLivres();
             afficherReservations();
-        };
-    </script>
+        }
+    }
+
+    function afficherReservations() {
+        const tbody = document.getElementById('tbody-reservations');
+        tbody.innerHTML = '';
+        const resas = mouvements.filter(m => m.type === "Réservation");
+
+        if (resas.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#7f8c8d;">Aucune réservation active dans le système.</td></tr>`;
+            return;
+        }
+
+        resas.forEach(m => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                    <td>#${m.idMouvement}</td>
+                    <td><strong>${m.titreLivre}</strong></td>
+                    <td>${m.usager}</td>
+                    <td><span class="badge-status status-reserve">${m.type}</span></td>
+                `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function communiquerChangementBase(idLivre, statut) {
+        console.log(`[Bridge SQL] Liaison reservation_livre.py -> ID: ${idLivre}, Statut: ${statut}`);
+    }
+
+    window.onload = function() {
+        afficherLivres();
+        afficherReservations();
+    };
+</script>
 </body>
 </html>
